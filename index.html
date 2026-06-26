@@ -207,11 +207,7 @@
     border-radius:10px;
     padding:14px 16px;
     margin:16px 0 18px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
   }
-  @media (max-width:520px){ .summary-box{ grid-template-columns:1fr; } }
 
   .summary-box .stat span{
     display:block;
@@ -232,20 +228,6 @@
     color:var(--slate);
     margin-top:2px;
   }
-
-  .room-final{ margin-top:10px; }
-  .room-final label{
-    display:flex;
-    align-items:baseline;
-    gap:6px;
-  }
-  .room-final .room-final-hint{
-    font-weight:400;
-    font-size:11px;
-    color:var(--slate);
-    text-transform:none;
-    letter-spacing:0;
-  }
 </style>
 </head>
 <body>
@@ -253,7 +235,7 @@
 <div class="wrap">
   <div class="eyebrow">Personalia &middot; Family Gathering</div>
   <h1>Data Karyawan Family Gathering</h1>
-  <p class="sub">Isi data karyawan dan keluarga yang ikut. Data dipakai untuk menghitung kebutuhan kamar hotel dan tersimpan otomatis ke spreadsheet.</p>
+  <p class="sub">Isi data karyawan dan keluarga yang ikut. Data akan tersimpan otomatis ke spreadsheet.</p>
 
   <div class="card">
     <form id="employeeForm" novalidate>
@@ -292,7 +274,7 @@
       <div class="field" id="anakAgesField" style="display:none;">
         <label>Usia Tiap Anak (tahun)</label>
         <div class="anak-ages-grid" id="anakAgesContainer"></div>
-        <div class="hint">Anak di bawah 5 tahun tidak dihitung menambah kebutuhan kamar.</div>
+        <div class="hint">Opsional, untuk data lengkap keluarga.</div>
       </div>
 
       <div class="summary-box">
@@ -301,16 +283,6 @@
           <b id="sumTotalFamily">1</b>
           <small>termasuk karyawan</small>
         </div>
-        <div class="stat">
-          <span>Saran Jumlah Kamar</span>
-          <b id="sumSuggestedRooms">1</b>
-          <small>maks 3 orang/kamar, anak &lt;5 thn tidak dihitung</small>
-        </div>
-      </div>
-
-      <div class="field room-final">
-        <label>Jumlah Kamar Final <span class="room-final-hint">(bisa diubah manual oleh HR)</span></label>
-        <input type="number" id="roomFinal" min="1" value="1">
       </div>
 
       <button type="submit" class="submit" id="submitBtn">Submit</button>
@@ -324,7 +296,7 @@
 // KONFIGURASI — ganti URL di bawah dengan URL Web App Apps Script kamu
 // ============================================================
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwrbghFw0m9qdq9-AzuINHXwJgsmTB-Nb_fI2z7JKP9hbHALHc7yWrfa-42gXdI6T4btA/exec"
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwcx6r5D4hi_GVRvsjcKV2Mdnu8DPC_aZ5DCun2NmuSDQDgLT9mQ3I65YPaMTVsWAfgsg/exec"
 };
 
 const $ = (id) => document.getElementById(id);
@@ -332,13 +304,7 @@ const $ = (id) => document.getElementById(id);
 // Generate ID karyawan sekali saat halaman dibuka
 const employeeId = "EMP-" + new Date().getFullYear() + "-" + String(Math.floor(1000 + Math.random()*9000));
 
-// ---- Family Gathering: aturan kamar ----
-const ROOM_CAPACITY = 3;     // maks orang per kamar (dengan extra bed)
-const CHILD_FREE_AGE = 5;    // anak di bawah usia ini tidak menambah kebutuhan kamar
-
-let roomFinalTouched = false;
-$("roomFinal").addEventListener("input", ()=>{ roomFinalTouched = true; });
-
+// ---- Family Gathering: hitung total anggota ----
 function renderAnakAgeInputs(n){
   const container = $("anakAgesContainer");
   const field = $("anakAgesField");
@@ -364,17 +330,8 @@ function getChildAges(){
 function calcFamily(){
   const spouse = $("spouseJoin").value === "Ya" ? 1 : 0;
   const ages = getChildAges();
-  const bigKids = ages.filter(a => a >= CHILD_FREE_AGE).length;
   const totalFamily = 1 + spouse + ages.length;
-  const countedForRoom = 1 + spouse + bigKids;
-  const suggestedRooms = Math.max(1, Math.ceil(countedForRoom / ROOM_CAPACITY));
-
   $("sumTotalFamily").textContent = totalFamily;
-  $("sumSuggestedRooms").textContent = suggestedRooms;
-
-  if(!roomFinalTouched){
-    $("roomFinal").value = suggestedRooms;
-  }
 }
 
 $("spouseJoin").addEventListener("change", calcFamily);
@@ -385,7 +342,6 @@ $("numChildren").addEventListener("input", ()=>{
   renderAnakAgeInputs(n);
   calcFamily();
 });
-$("roomFinal").addEventListener("input", calcFamily);
 
 calcFamily(); // inisialisasi tampilan saat halaman dibuka
 
@@ -427,9 +383,7 @@ $("employeeForm").addEventListener("submit", async function(e){
     spouseJoin: $("spouseJoin").value,
     numChildren: $("numChildren").value,
     childAges: getChildAges().join(", "),
-    totalFamilyMembers: $("sumTotalFamily").textContent,
-    suggestedRooms: $("sumSuggestedRooms").textContent,
-    finalRooms: $("roomFinal").value
+    totalFamilyMembers: $("sumTotalFamily").textContent
   };
 
   if(CONFIG.APPS_SCRIPT_URL.includes("PASTE_URL")){
@@ -452,7 +406,6 @@ $("employeeForm").addEventListener("submit", async function(e){
     showStatus("Data berhasil disimpan ke spreadsheet.", "ok");
 
     this.reset();
-    roomFinalTouched = false;
     renderAnakAgeInputs(0);
     calcFamily();
   }catch(err){
