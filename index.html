@@ -228,6 +228,198 @@
     color:var(--slate);
     margin-top:2px;
   }
+
+  /* ---- MODAL ---- */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(27,42,74,0.5);
+    backdrop-filter:blur(3px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .22s ease;
+    z-index:1000;
+  }
+  .modal-overlay.show{
+    opacity:1;
+    pointer-events:all;
+  }
+
+  .modal-card{
+    background:var(--card);
+    border-radius:18px;
+    width:100%;
+    max-width:430px;
+    max-height:88vh;
+    overflow-y:auto;
+    box-shadow:0 24px 60px -12px rgba(27,42,74,0.35);
+    transform:translateY(14px) scale(.96);
+    opacity:0;
+    transition:transform .28s cubic-bezier(.34,1.56,.64,1), opacity .2s ease;
+  }
+  .modal-overlay.show .modal-card{
+    transform:translateY(0) scale(1);
+    opacity:1;
+  }
+
+  @media (max-width:560px){
+    .modal-overlay{ align-items:flex-end; padding:0; }
+    .modal-card{
+      max-width:100%;
+      border-radius:20px 20px 0 0;
+      max-height:90vh;
+      transform:translateY(100%);
+    }
+    .modal-overlay.show .modal-card{ transform:translateY(0); }
+  }
+
+  .modal-body{ padding:26px 24px 22px; }
+  @media (max-width:560px){ .modal-body{ padding:22px 18px 20px; } }
+
+  .modal-handle{
+    display:none;
+    width:36px; height:4px;
+    background:var(--line-dark);
+    border-radius:3px;
+    margin:10px auto 0;
+  }
+  @media (max-width:560px){ .modal-handle{ display:block; } }
+
+  .modal-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:700;
+    font-size:18px;
+    margin:0 0 4px;
+  }
+  .modal-sub{
+    font-size:12.5px;
+    color:var(--slate);
+    margin:0 0 16px;
+  }
+
+  .review-list{
+    border:1px solid var(--line);
+    border-radius:10px;
+    overflow:hidden;
+    margin-bottom:16px;
+  }
+  .review-row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 14px;
+    font-size:13px;
+    border-bottom:1px solid var(--line);
+    background:#FBF9F4;
+  }
+  .review-row:last-child{ border-bottom:none; }
+  .review-row span{ color:var(--slate); flex-shrink:0; }
+  .review-row b{ text-align:right; color:var(--ink); font-weight:600; }
+
+  .confirm-check{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    background:#FBF6EC;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:12px 14px;
+    margin-bottom:18px;
+    cursor:pointer;
+  }
+  .confirm-check input{
+    width:18px; height:18px;
+    accent-color:var(--mustard-deep);
+    margin-top:1px;
+    flex-shrink:0;
+    cursor:pointer;
+  }
+  .confirm-check span{ font-size:13px; color:var(--ink-soft); line-height:1.4; }
+
+  .modal-actions{
+    display:flex;
+    gap:10px;
+  }
+  .btn-secondary{
+    flex:1;
+    background:#FBF9F4;
+    color:var(--ink-soft);
+    border:1.5px solid var(--line-dark);
+    border-radius:9px;
+    font-family:'Inter', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:12px 14px;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .btn-secondary:hover{ background:#F2EEE2; }
+  .btn-primary{
+    flex:1.4;
+    background:var(--ink);
+    color:#fff;
+    border:none;
+    border-radius:9px;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    padding:12px 14px;
+    cursor:pointer;
+    transition:background .15s, transform .1s;
+  }
+  .btn-primary:hover:not(:disabled){ background:var(--ink-soft); }
+  .btn-primary:active:not(:disabled){ transform:scale(.98); }
+  .btn-primary:disabled{ background:var(--line-dark); color:#A9A092; cursor:not-allowed; }
+
+  .modal-error{
+    font-size:12.5px;
+    color:#B5402A;
+    background:#FBE9E6;
+    border-radius:8px;
+    padding:9px 12px;
+    margin-bottom:14px;
+    display:none;
+  }
+  .modal-error.show{ display:block; }
+
+  /* success modal */
+  .success-icon{
+    width:64px; height:64px;
+    margin:4px auto 16px;
+    display:block;
+  }
+  .success-icon circle{
+    fill:none;
+    stroke:var(--success);
+    stroke-width:4;
+    stroke-dasharray:160;
+    stroke-dashoffset:160;
+    transition:stroke-dashoffset .5s ease .1s;
+  }
+  .success-icon path{
+    fill:none;
+    stroke:var(--success);
+    stroke-width:5;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray:40;
+    stroke-dashoffset:40;
+    transition:stroke-dashoffset .35s ease .45s;
+  }
+  .modal-overlay.show .success-icon circle{ stroke-dashoffset:0; }
+  .modal-overlay.show .success-icon path{ stroke-dashoffset:0; }
+
+  .modal-center{ text-align:center; }
+  .modal-center .modal-title{ margin-bottom:6px; }
+  .modal-center .modal-sub{ margin-bottom:22px; }
+
+  @media (prefers-reduced-motion: reduce){
+    .modal-overlay, .modal-card, .success-icon circle, .success-icon path{ transition:none; }
+  }
 </style>
 </head>
 <body>
@@ -245,11 +437,17 @@
           <input type="text" id="fullName" placeholder="cth. Siti Rahayu" autocomplete="off">
           <div class="err">Nama wajib diisi.</div>
         </div>
-        <div class="field" id="f-phone">
-          <label>No. Telepon <span class="req">*</span></label>
-          <input type="tel" id="phone" placeholder="08xxxxxxxxxx" autocomplete="off">
-          <div class="err">Masukkan nomor telepon yang valid.</div>
+        <div class="field" id="f-nik">
+          <label>NIK Karyawan <span class="req">*</span></label>
+          <input type="text" id="nik" inputmode="numeric" placeholder="cth. 3201xxxxxxxxxxxx" autocomplete="off">
+          <div class="err">NIK wajib diisi (angka, 6-20 digit).</div>
         </div>
+      </div>
+
+      <div class="field" id="f-phone">
+        <label>No. Telepon <span class="req">*</span></label>
+        <input type="tel" id="phone" placeholder="08xxxxxxxxxx" autocomplete="off">
+        <div class="err">Masukkan nomor telepon yang valid.</div>
       </div>
 
       <hr class="divider">
@@ -291,12 +489,53 @@
   </div>
 </div>
 
+<!-- MODAL: Periksa Data -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-card">
+    <div class="modal-handle"></div>
+    <div class="modal-body">
+      <div class="modal-title">Periksa Data Sebelum Dikirim</div>
+      <p class="modal-sub">Pastikan data di bawah ini sudah benar.</p>
+
+      <div class="review-list" id="reviewList"></div>
+
+      <div class="modal-error" id="confirmError"></div>
+
+      <label class="confirm-check">
+        <input type="checkbox" id="confirmCheck">
+        <span>Saya sudah memeriksa dan data di atas sudah benar.</span>
+      </label>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="btnEdit">Kembali / Edit</button>
+        <button type="button" class="btn-primary" id="btnConfirmSend" disabled>Kirim Data</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Terima Kasih -->
+<div class="modal-overlay" id="successModal">
+  <div class="modal-card">
+    <div class="modal-handle"></div>
+    <div class="modal-body modal-center">
+      <svg class="success-icon" viewBox="0 0 64 64">
+        <circle cx="32" cy="32" r="26"></circle>
+        <path d="M21 33 L29 41 L44 24"></path>
+      </svg>
+      <div class="modal-title" id="successTitle">Terima kasih!</div>
+      <p class="modal-sub">Data Anda berhasil tersimpan.</p>
+      <button type="button" class="btn-primary" id="btnCloseSuccess" style="width:100%;">Tutup</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // KONFIGURASI — ganti URL di bawah dengan URL Web App Apps Script kamu
 // ============================================================
 const CONFIG = {
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwcx6r5D4hi_GVRvsjcKV2Mdnu8DPC_aZ5DCun2NmuSDQDgLT9mQ3I65YPaMTVsWAfgsg/exec"
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbx3ftj61cK5jKJkpaNmp7rBbJoRnA4NIgXFZ_P9pkWgxwYwiOjb2__iueJ6aQPXFMEkkQ/exec"
 };
 
 const $ = (id) => document.getElementById(id);
@@ -354,6 +593,7 @@ function validate(){
   let ok = true;
   const checks = [
     ["f-name", $("fullName").value.trim().length > 0],
+    ["f-nik", /^[0-9]{6,20}$/.test($("nik").value.trim())],
     ["f-phone", /^[0-9+\-\s]{8,15}$/.test($("phone").value.trim())],
   ];
   checks.forEach(([id, valid])=>{
@@ -369,29 +609,77 @@ function showStatus(msg, type){
   el.className = "status-msg show " + type;
 }
 
-$("employeeForm").addEventListener("submit", async function(e){
-  e.preventDefault();
-  if(!validate()){
-    showStatus("Beberapa kolom belum lengkap atau belum valid. Periksa kembali ya.", "fail");
-    return;
-  }
+// ---- Modal helpers ----
+function openModal(modalEl){ modalEl.classList.add("show"); document.body.style.overflow="hidden"; }
+function closeModal(modalEl){ modalEl.classList.remove("show"); document.body.style.overflow=""; }
 
-  const payload = {
+function buildPayload(){
+  return {
     employeeId,
     fullName: $("fullName").value.trim(),
+    nik: $("nik").value.trim(),
     phone: $("phone").value.trim(),
     spouseJoin: $("spouseJoin").value,
     numChildren: $("numChildren").value,
     childAges: getChildAges().join(", "),
     totalFamilyMembers: $("sumTotalFamily").textContent
   };
+}
 
+function renderReview(p){
+  const rows = [
+    ["Nama Lengkap", p.fullName],
+    ["NIK Karyawan", p.nik],
+    ["No. Telepon", p.phone],
+    ["Pasangan Ikut", p.spouseJoin],
+    ["Jumlah Anak", p.numChildren],
+    ["Usia Anak", p.childAges || "-"],
+    ["Total Keluarga", p.totalFamilyMembers + " orang"]
+  ];
+  $("reviewList").innerHTML = rows.map(([label,val])=>
+    `<div class="review-row"><span>${label}</span><b>${val}</b></div>`
+  ).join("");
+}
+
+// ---- Tahap 1: klik Submit di form -> validasi -> buka modal review ----
+$("employeeForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  if(!validate()){
+    showStatus("Beberapa kolom belum lengkap atau belum valid. Periksa kembali ya.", "fail");
+    return;
+  }
+  showStatus("", ""); // clear status lama
+  $("statusMsg").className = "status-msg";
+
+  const payload = buildPayload();
+  renderReview(payload);
+  $("confirmCheck").checked = false;
+  $("btnConfirmSend").disabled = true;
+  $("confirmError").classList.remove("show");
+  openModal($("confirmModal"));
+});
+
+// checkbox toggle tombol kirim
+$("confirmCheck").addEventListener("change", function(){
+  $("btnConfirmSend").disabled = !this.checked;
+});
+
+// tombol kembali/edit -> tutup modal, data form tetap utuh
+$("btnEdit").addEventListener("click", function(){
+  closeModal($("confirmModal"));
+});
+
+// ---- Tahap 2: klik Kirim Data di modal -> kirim ke spreadsheet ----
+$("btnConfirmSend").addEventListener("click", async function(){
   if(CONFIG.APPS_SCRIPT_URL.includes("PASTE_URL")){
-    showStatus("URL Apps Script belum diisi. Tempel URL deployment-mu di bagian CONFIG pada kode.", "fail");
+    const err = $("confirmError");
+    err.textContent = "URL Apps Script belum diisi. Tempel URL deployment-mu di bagian CONFIG pada kode.";
+    err.classList.add("show");
     return;
   }
 
-  const btn = $("submitBtn");
+  const payload = buildPayload();
+  const btn = this;
   btn.disabled = true;
   btn.textContent = "Mengirim...";
 
@@ -403,17 +691,26 @@ $("employeeForm").addEventListener("submit", async function(e){
       body: JSON.stringify(payload)
     });
 
-    showStatus("Data berhasil disimpan ke spreadsheet.", "ok");
-
-    this.reset();
-    renderAnakAgeInputs(0);
-    calcFamily();
+    closeModal($("confirmModal"));
+    $("successTitle").textContent = "Terima kasih, " + (payload.fullName || "Anda") + "!";
+    openModal($("successModal"));
   }catch(err){
-    showStatus("Gagal mengirim data. Periksa koneksi internet dan URL Apps Script.", "fail");
+    const errEl = $("confirmError");
+    errEl.textContent = "Gagal mengirim data. Periksa koneksi internet dan URL Apps Script.";
+    errEl.classList.add("show");
   }finally{
     btn.disabled = false;
-    btn.textContent = "Submit";
+    btn.textContent = "Kirim Data";
   }
+});
+
+// tombol tutup di modal terima kasih -> reset form total
+$("btnCloseSuccess").addEventListener("click", function(){
+  closeModal($("successModal"));
+  $("employeeForm").reset();
+  renderAnakAgeInputs(0);
+  calcFamily();
+  $("statusMsg").className = "status-msg";
 });
 </script>
 </body>
