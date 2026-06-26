@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Karyawan Family Gathering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B2A4A;
+    --ink-soft:#3A4A6B;
+    --paper:#F5EFE3;
+    --card:#FFFFFF;
+    --mustard:#D98E2B;
+    --mustard-deep:#B6731A;
+    --slate:#6B7585;
+    --success:#3F7D58;
+    --line:#E3DCC9;
+    --line-dark:#D8CFB8;
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(27,42,74,0.06) 1px, transparent 0);
+    background-size:22px 22px;
+    color:var(--ink);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    padding:40px 20px;
+  }
+
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+  }
+
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--mustard-deep);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+
+  h1{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:clamp(26px,4vw,34px);
+    font-weight:700;
+    margin:0 0 6px;
+    line-height:1.15;
+  }
+
+  .sub{
+    color:var(--slate);
+    font-size:15px;
+    margin:0 0 28px;
+    max-width:520px;
+  }
+
+  /* ---- FORM CARD ---- */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:32px;
+    box-shadow:0 1px 2px rgba(27,42,74,0.04);
+  }
+
+  .field-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  @media (max-width:520px){ .field-row{ grid-template-columns:1fr; } }
+
+  .field{ margin-bottom:18px; }
+
+  label{
+    display:block;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+    letter-spacing:.01em;
+  }
+  label .req{ color:var(--mustard-deep); }
+
+  input, select, textarea{
+    width:100%;
+    font-family:'Inter', sans-serif;
+    font-size:14.5px;
+    color:var(--ink);
+    background:#FBF9F4;
+    border:1.5px solid var(--line-dark);
+    border-radius:8px;
+    padding:10px 12px;
+    transition:border-color .15s, background .15s;
+  }
+
+  input:focus, select:focus, textarea:focus{
+    outline:none;
+    border-color:var(--mustard);
+    background:#fff;
+  }
+  input:focus-visible, select:focus-visible, textarea:focus-visible{
+    outline:2px solid var(--mustard);
+    outline-offset:1px;
+  }
+
+  .hint{ font-size:11.5px; color:var(--slate); margin-top:4px; }
+  .err{ font-size:11.5px; color:#B5402A; margin-top:4px; display:none; }
+  .field.invalid input, .field.invalid select{ border-color:#B5402A; }
+  .field.invalid .err{ display:block; }
+
+  .divider{
+    border:none; border-top:1px solid var(--line);
+    margin:8px 0 22px;
+  }
+
+  button.submit{
+    width:100%;
+    background:var(--ink);
+    color:#fff;
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    border:none;
+    border-radius:9px;
+    padding:14px 18px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    transition:background .15s, transform .1s;
+  }
+  button.submit:hover{ background:var(--ink-soft); }
+  button.submit:active{ transform:scale(0.99); }
+  button.submit:disabled{ opacity:.6; cursor:wait; }
+
+  .status-msg{
+    margin-top:14px;
+    font-size:13.5px;
+    font-weight:500;
+    display:none;
+    padding:10px 12px;
+    border-radius:8px;
+  }
+  .status-msg.show{ display:block; }
+  .status-msg.ok{ background:#EAF3EC; color:var(--success); }
+  .status-msg.fail{ background:#FBE9E6; color:#B5402A; }
+
+  @media (prefers-reduced-motion: reduce){
+    button.submit{ transition:none; }
+  }
+
+  /* ---- FAMILY GATHERING SECTION ---- */
+  .section-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    margin:4px 0 4px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .section-title .tag{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--mustard-deep);
+    background:#FBEEDA;
+    padding:2px 7px;
+    border-radius:5px;
+  }
+  .section-sub{
+    font-size:12.5px;
+    color:var(--slate);
+    margin:0 0 16px;
+  }
+
+  .anak-ages-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(120px,1fr));
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .anak-usia-wrap{ position:relative; }
+  .anak-usia-wrap label{
+    font-size:11px;
+    color:var(--slate);
+    font-weight:500;
+    margin-bottom:4px;
+  }
+
+  .summary-box{
+    background:#FBF6EC;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px 16px;
+    margin:16px 0 18px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  @media (max-width:520px){ .summary-box{ grid-template-columns:1fr; } }
+
+  .summary-box .stat span{
+    display:block;
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.07em;
+    color:var(--slate);
+    margin-bottom:3px;
+  }
+  .summary-box .stat b{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:20px;
+    color:var(--ink);
+  }
+  .summary-box .stat small{
+    display:block;
+    font-size:11px;
+    color:var(--slate);
+    margin-top:2px;
+  }
+
+  .room-final{ margin-top:10px; }
+  .room-final label{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+  }
+  .room-final .room-final-hint{
+    font-weight:400;
+    font-size:11px;
+    color:var(--slate);
+    text-transform:none;
+    letter-spacing:0;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="eyebrow">Personalia &middot; Family Gathering</div>
+  <h1>Data Karyawan Family Gathering</h1>
+  <p class="sub">Isi data karyawan dan keluarga yang ikut. Data dipakai untuk menghitung kebutuhan kamar hotel dan tersimpan otomatis ke spreadsheet.</p>
+
+  <div class="card">
+    <form id="employeeForm" novalidate>
+      <div class="field-row">
+        <div class="field" id="f-name">
+          <label>Nama Lengkap <span class="req">*</span></label>
+          <input type="text" id="fullName" placeholder="cth. Siti Rahayu" autocomplete="off">
+          <div class="err">Nama wajib diisi.</div>
+        </div>
+        <div class="field" id="f-phone">
+          <label>No. Telepon <span class="req">*</span></label>
+          <input type="tel" id="phone" placeholder="08xxxxxxxxxx" autocomplete="off">
+          <div class="err">Masukkan nomor telepon yang valid.</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <div class="section-title">Data Keluarga <span class="tag">Family Gathering</span></div>
+      <p class="section-sub">Dipakai untuk menghitung kebutuhan kamar hotel saat family gathering.</p>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Pasangan (Suami/Istri) Ikut?</label>
+          <select id="spouseJoin">
+            <option value="Tidak">Tidak</option>
+            <option value="Ya">Ya</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Jumlah Anak yang Ikut</label>
+          <input type="number" id="numChildren" min="0" max="10" value="0">
+        </div>
+      </div>
+
+      <div class="field" id="anakAgesField" style="display:none;">
+        <label>Usia Tiap Anak (tahun)</label>
+        <div class="anak-ages-grid" id="anakAgesContainer"></div>
+        <div class="hint">Anak di bawah 5 tahun tidak dihitung menambah kebutuhan kamar.</div>
+      </div>
+
+      <div class="summary-box">
+        <div class="stat">
+          <span>Total Anggota Keluarga Ikut</span>
+          <b id="sumTotalFamily">1</b>
+          <small>termasuk karyawan</small>
+        </div>
+        <div class="stat">
+          <span>Saran Jumlah Kamar</span>
+          <b id="sumSuggestedRooms">1</b>
+          <small>maks 3 orang/kamar, anak &lt;5 thn tidak dihitung</small>
+        </div>
+      </div>
+
+      <div class="field room-final">
+        <label>Jumlah Kamar Final <span class="room-final-hint">(bisa diubah manual oleh HR)</span></label>
+        <input type="number" id="roomFinal" min="1" value="1">
+      </div>
+
+      <button type="submit" class="submit" id="submitBtn">Submit</button>
+      <div class="status-msg" id="statusMsg"></div>
+    </form>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// KONFIGURASI — ganti URL di bawah dengan URL Web App Apps Script kamu
+// ============================================================
+const CONFIG = {
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbwrbghFw0m9qdq9-AzuINHXwJgsmTB-Nb_fI2z7JKP9hbHALHc7yWrfa-42gXdI6T4btA/exec"
+};
+
+const $ = (id) => document.getElementById(id);
+
+// Generate ID karyawan sekali saat halaman dibuka
+const employeeId = "EMP-" + new Date().getFullYear() + "-" + String(Math.floor(1000 + Math.random()*9000));
+
+// ---- Family Gathering: aturan kamar ----
+const ROOM_CAPACITY = 3;     // maks orang per kamar (dengan extra bed)
+const CHILD_FREE_AGE = 5;    // anak di bawah usia ini tidak menambah kebutuhan kamar
+
+let roomFinalTouched = false;
+$("roomFinal").addEventListener("input", ()=>{ roomFinalTouched = true; });
+
+function renderAnakAgeInputs(n){
+  const container = $("anakAgesContainer");
+  const field = $("anakAgesField");
+  container.innerHTML = "";
+  field.style.display = n > 0 ? "block" : "none";
+  for(let i=0;i<n;i++){
+    const wrap = document.createElement("div");
+    wrap.className = "anak-usia-wrap";
+    wrap.innerHTML = `<label>Anak ${i+1}</label><input type="number" class="anak-usia" min="0" max="25" placeholder="usia">`;
+    container.appendChild(wrap);
+  }
+  container.querySelectorAll(".anak-usia").forEach(inp=>{
+    inp.addEventListener("input", calcFamily);
+  });
+}
+
+function getChildAges(){
+  return Array.from(document.querySelectorAll(".anak-usia"))
+    .map(inp => inp.value === "" ? 0 : parseInt(inp.value, 10))
+    .map(v => isNaN(v) ? 0 : v);
+}
+
+function calcFamily(){
+  const spouse = $("spouseJoin").value === "Ya" ? 1 : 0;
+  const ages = getChildAges();
+  const bigKids = ages.filter(a => a >= CHILD_FREE_AGE).length;
+  const totalFamily = 1 + spouse + ages.length;
+  const countedForRoom = 1 + spouse + bigKids;
+  const suggestedRooms = Math.max(1, Math.ceil(countedForRoom / ROOM_CAPACITY));
+
+  $("sumTotalFamily").textContent = totalFamily;
+  $("sumSuggestedRooms").textContent = suggestedRooms;
+
+  if(!roomFinalTouched){
+    $("roomFinal").value = suggestedRooms;
+  }
+}
+
+$("spouseJoin").addEventListener("change", calcFamily);
+$("numChildren").addEventListener("input", ()=>{
+  let n = parseInt($("numChildren").value, 10);
+  if(isNaN(n) || n < 0) n = 0;
+  if(n > 10) n = 10;
+  renderAnakAgeInputs(n);
+  calcFamily();
+});
+$("roomFinal").addEventListener("input", calcFamily);
+
+calcFamily(); // inisialisasi tampilan saat halaman dibuka
+
+// ---- Validasi ----
+function setError(fieldId, invalid){
+  $(fieldId).classList.toggle("invalid", invalid);
+}
+
+function validate(){
+  let ok = true;
+  const checks = [
+    ["f-name", $("fullName").value.trim().length > 0],
+    ["f-phone", /^[0-9+\-\s]{8,15}$/.test($("phone").value.trim())],
+  ];
+  checks.forEach(([id, valid])=>{
+    setError(id, !valid);
+    if(!valid) ok = false;
+  });
+  return ok;
+}
+
+function showStatus(msg, type){
+  const el = $("statusMsg");
+  el.textContent = msg;
+  el.className = "status-msg show " + type;
+}
+
+$("employeeForm").addEventListener("submit", async function(e){
+  e.preventDefault();
+  if(!validate()){
+    showStatus("Beberapa kolom belum lengkap atau belum valid. Periksa kembali ya.", "fail");
+    return;
+  }
+
+  const payload = {
+    employeeId,
+    fullName: $("fullName").value.trim(),
+    phone: $("phone").value.trim(),
+    spouseJoin: $("spouseJoin").value,
+    numChildren: $("numChildren").value,
+    childAges: getChildAges().join(", "),
+    totalFamilyMembers: $("sumTotalFamily").textContent,
+    suggestedRooms: $("sumSuggestedRooms").textContent,
+    finalRooms: $("roomFinal").value
+  };
+
+  if(CONFIG.APPS_SCRIPT_URL.includes("PASTE_URL")){
+    showStatus("URL Apps Script belum diisi. Tempel URL deployment-mu di bagian CONFIG pada kode.", "fail");
+    return;
+  }
+
+  const btn = $("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "Mengirim...";
+
+  try{
+    await fetch(CONFIG.APPS_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    });
+
+    showStatus("Data berhasil disimpan ke spreadsheet.", "ok");
+
+    this.reset();
+    roomFinalTouched = false;
+    renderAnakAgeInputs(0);
+    calcFamily();
+  }catch(err){
+    showStatus("Gagal mengirim data. Periksa koneksi internet dan URL Apps Script.", "fail");
+  }finally{
+    btn.disabled = false;
+    btn.textContent = "Submit";
+  }
+});
+</script>
+</body>
+</html>
